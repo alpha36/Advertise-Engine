@@ -1,7 +1,8 @@
 from fastapi import APIRouter
+from app.models.request import RecommendBody
 
 router = APIRouter()
 
-@router.get("/items/{item_id}")
-def read_item(item_id: int):
-    return {"item_id": item_id, "message": "Detalii item"}
+@router.put("/advertise-recommendation")
+def advertise_recommendation(request: RecommendBody):
+     #ToDo de pus logica endpoint-ului
