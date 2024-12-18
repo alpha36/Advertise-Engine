@@ -1,0 +1,27 @@
+{
+    "name": "AdvEngine",
+    "description": "Best extension for ads (yep it exists!)",
+    "version": "1.0",
+    "content_scripts": [
+      {
+        "matches": ["<all_urls>"],
+        "js": ["content-script.js"]
+      }
+    ],
+    "manifest_version": 3,
+    "action": {
+      "default_popup": "index.html",
+      "default_title": "AdvEngine"
+    },
+    "permissions": [
+      "tabs",
+      "webNavigation",
+      "scripting",
+      "storage",
+      "activeTab"
+    ],
+    "host_permissions": ["<all_urls>"],
+    "background": {
+      "service_worker": "background.js"
+    }
+  }

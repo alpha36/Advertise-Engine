@@ -1,0 +1,19 @@
+
+body { font-family: Arial, sans-serif; width: 200px; text-align: center; }
+label { font-size: 14px; }
+input[type="checkbox"] { margin-left: 10px; }
+
+.ext-body{
+    width:400px;
+    height: 550px;
+    background: linear-gradient(#ffdada, #cdd1fd);
+    font-family:'Franklin Gothic Medium', 'Arial Narrow', Arial, sans-serif;
+    text-shadow: 2px 2px 3px black;
+}
+
+.ext-header{
+    text-align: center;
+    color:rgb(255, 255, 255);
+    font-size: 14px;
+    letter-spacing: 3px;
+}
