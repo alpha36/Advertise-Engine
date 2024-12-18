@@ -1,8 +1,9 @@
 from fastapi import APIRouter
 from app.models.request import RecommendBody
+from app.urlcategorizer.urlcategorizer import categorize
 
 router = APIRouter()
 
-@router.put("/advertise-recommendation")
+@router.post("/advertise-recommendation")
 def advertise_recommendation(request: RecommendBody):
-     #ToDo de pus logica endpoint-ului
+    categorize(request.url)
