@@ -8,33 +8,39 @@ function sendUrlToBackend(url, tabId) {
   //showModalOnPage(tabId, "https://joyfurpets.com/wp-content/uploads/2020/05/vrei-caine-buldog-francez-1.jpg", "" || '#');
 
       // Check if modals are enabled
-      chrome.storage.sync.get(['modalsEnabled'], (result) => {
-        if (result.modalsEnabled !== false) { // Default to true if not set
-          // Show modal on active tab
-          showModalOnPage(tabId, "https://joyfurpets.com/wp-content/uploads/2020/05/vrei-caine-buldog-francez-1.jpg", "" || '#');
+      // chrome.storage.sync.get(['modalsEnabled'], (result) => {
+      //   if (result.modalsEnabled !== false) { // Default to true if not set
+      //     // Show modal on active tab
+      //     showModalOnPage(tabId, "https://joyfurpets.com/wp-content/uploads/2020/05/vrei-caine-buldog-francez-1.jpg", "" || '#');
+      //   } else {
+      //     console.log('Modal generation is disabled.');
+      //   }
+      // });
+
+    chrome.storage.sync.get(['modalsEnabled'], (result) => {
+      if (result.modalsEnabled !== false){
+       // Make API request to send URL
+          fetch(apiEndpoint, {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ url: url }),
+          })
+            .then((response) => {
+              if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
+              return response.json(); // Expect backend to return image URL and optional link
+            })
+            .then((data) => {
+              console.log('Received data from backend:', data);
+              // Inject the image as a modal (you can swap for bottom or right popup)
+              showModalOnPage(tabId, data.imageUrl, data.linkUrl || '#');
+            })
+            .catch((error) => {
+              console.error('Error sending URL or receiving image:', error);
+            });
         } else {
           console.log('Modal generation is disabled.');
         }
-      });
-
-  // // Make API request to send URL
-  // fetch(apiEndpoint, {
-  //   method: 'POST',
-  //   headers: { 'Content-Type': 'application/json' },
-  //   body: JSON.stringify({ url: url }),
-  // })
-  //   .then((response) => {
-  //     if (!response.ok) throw new Error(`HTTP error! Status: ${response.status}`);
-  //     return response.json(); // Expect backend to return image URL and optional link
-  //   })
-  //   .then((data) => {
-  //     console.log('Received data from backend:', data);
-  //     // Inject the image as a modal (you can swap for bottom or right popup)
-  //     showModalOnPage(tabId, data.imageUrl, data.linkUrl || '#');
-  //   })
-  //   .catch((error) => {
-  //     console.error('Error sending URL or receiving image:', error);
-  //   });
+    });
 }
 
 // Function to inject modal popup into a tab
@@ -109,15 +115,25 @@ function createPopup(imageUrl, linkUrl, type) {
   document.body.appendChild(popupContainer);
 }
 
-// Listen for tab activation or update events
-chrome.tabs.onActivated.addListener((activeInfo) => {
-  chrome.tabs.get(activeInfo.tabId, (tab) => {
-    if (tab.url) sendUrlToBackend(tab.url, activeInfo.tabId);
-  });
-});
+// // Listen for tab activation or update events
+// chrome.tabs.onActivated.addListener((activeInfo) => {
+//   chrome.tabs.get(activeInfo.tabId, (tab) => {
+//     if (tab.url) sendUrlToBackend(tab.url, activeInfo.tabId);
+//   });
+// });
 
-chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
-  if (changeInfo.status === 'complete' && tab.url) {
-    sendUrlToBackend(tab.url, tabId);
-  }
-});
+// chrome.tabs.onUpdated.addListener((tabId, changeInfo, tab) => {
+//   if (changeInfo.status === 'complete' && tab.url) {
+//     sendUrlToBackend(tab.url, tabId);
+//   }
+// });
+
+setInterval(() => {
+
+  chrome.tabs.query({ active: true, currentWindow: true }, (tabs) => {
+    if (tabs.length === 0) return; // No active tab
+    const tab = tabs[0];
+    sendUrlToBackend(tab.url, tab.id)
+  });
+
+}, 10 * 1000)
