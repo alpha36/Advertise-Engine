@@ -1,5 +1,5 @@
 // API Endpoint for backend
-const apiEndpoint = 'https://your-backend-api.com/endpoint';
+const apiEndpoint = 'http://localhost:9090/advertise-recommendation';
 
 // Function to send the URL to the backend and inject modal
 function sendUrlToBackend(url, tabId) {
@@ -32,7 +32,7 @@ function sendUrlToBackend(url, tabId) {
             .then((data) => {
               console.log('Received data from backend:', data);
               // Inject the image as a modal (you can swap for bottom or right popup)
-              showModalOnPage(tabId, data.imageUrl, data.linkUrl || '#');
+              showModalOnPage(tabId, data.imageUrl, data.linkUrl || '#', data.type);
             })
             .catch((error) => {
               console.error('Error sending URL or receiving image:', error);
@@ -44,11 +44,11 @@ function sendUrlToBackend(url, tabId) {
 }
 
 // Function to inject modal popup into a tab
-function showModalOnPage(tabId, imageUrl, linkUrl) {
+function showModalOnPage(tabId, imageUrl, linkUrl, type) {
   chrome.scripting.executeScript({
     target: { tabId: tabId },
     func: createPopup, // Generalized popup creation
-    args: [imageUrl, linkUrl, 'right'], // Pass popup type ('modal', 'bottom', 'right')
+    args: [imageUrl, linkUrl, type], // Pass popup type ('modal', 'bottom', 'right')
   });
 }
 
