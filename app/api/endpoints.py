@@ -16,6 +16,6 @@ def advertise_recommendation(request: RecommendBody):
 
     return {
         "imageUrl": random_value,
-        "linkUrl": request.url,
+        "linkUrl": "https://upb.ro/",
         "type": random_key
     }
